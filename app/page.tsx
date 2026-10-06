@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import HomeHero from "@/components/HomeHero";
+import CinematicHero from "@/components/CinematicHero";
 import TrustStrip from "@/components/TrustStrip";
 import ProductsGrid from "@/components/ProductsGrid";
 import ProjectsGallery from "@/components/ProjectsGallery";
@@ -25,7 +25,7 @@ export const metadata: Metadata = {
 export default function HomePage() {
   return (
     <>
-      <HomeHero />
+      <CinematicHero />
       <TrustStrip />
 
       {/* محصولات و خدمات */}

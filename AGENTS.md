@@ -26,6 +26,31 @@ done
 Every route must answer 200 (`/products/[slug]` renders from `getProduct`).
 `npx tsc --noEmit` inside the container type-checks without a build.
 
+## Cinematic hero
+
+`components/CinematicHero.tsx` is the whole hero: a tall section (240svh on
+mobile, 340svh on desktop) holding a sticky `100svh` viewport, whose scroll
+progress drives the video timeline through `hooks/useScrollScrubVideo.ts`.
+
+- The video is **never played**, only seeked. One passive scroll listener records
+  a target progress; a single rAF loop eases toward it and issues the seeks, so
+  fast wheel/touch scrolling can never flood the decoder with seeks.
+- `public/videos/*.mp4` are re-encoded **all-intra** (every frame a keyframe) from
+  the supplied clip — that is what makes scrubbing feel instant rather than
+  stuttery. If the clip is ever replaced, keep `-g 1 -keyint_min 1 -sc_threshold 0`
+  and regenerate the first-frame still `public/images/hero-cinematic-poster.webp`:
+  ```bash
+  docker run --rm -v "$PWD:/w" --entrypoint sh jrottenberg/ffmpeg:6-alpine -c \
+    "ffmpeg -y -i /w/public/videos/hero-cinematic.mp4 -an -c:v libx264 -g 1 -keyint_min 1 \
+     -sc_threshold 0 -crf 28 -preset slow -tune film -pix_fmt yuv420p -movflags +faststart /w/out.mp4"
+  ```
+- `prefers-reduced-motion` swaps the video for that poster still through the
+  `.motion-still` / `.motion-move` classes in `app/globals.css`, and the hook skips
+  loading the file at all.
+- Scroll progress is measured against the section, not the page, so keep the
+  sticky viewport as the section's direct first child — the hook derives the
+  scroll distance from `section.offsetHeight - sticky.offsetHeight`.
+
 ## Quirks worth knowing
 
 - **Never name a top-level export `process` in `lib/site.ts`.** It shadows Node's

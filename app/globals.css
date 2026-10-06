@@ -116,6 +116,22 @@
     background-size: 44px 44px;
   }
 
+  /* Cinematic hero: under reduced motion the scroll-scrubbed video is swapped
+     for a plain still of the same frame, so nothing moves with the page. */
+  .motion-still {
+    display: none;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .motion-still {
+      display: block;
+    }
+
+    .motion-move {
+      display: none;
+    }
+  }
+
   .image-shade {
     background: linear-gradient(
       to top,
