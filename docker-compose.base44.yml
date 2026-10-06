@@ -1,0 +1,41 @@
+# Base44 development stack for the Vostadoor website.
+#
+# The app is a Next.js (App Router) site running straight from the cloned source
+# with the dev server, so every edit below `app/`, `components/` or `lib/`
+# hot-reloads in the preview without a rebuild. No database or other service is
+# required — the contact form posts to a route handler in the same app.
+services:
+  web:
+    image: node:22
+    working_dir: /app
+    restart: on-failure
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=development
+      - NEXT_TELEMETRY_DISABLED=1
+      # bind mounts do not always deliver inotify events; polling keeps HMR alive
+      - WATCHPACK_POLLING=true
+      # used by next.config.mjs to allow the preview origin for dev assets/HMR
+      - BASE44_PUBLIC_HOST_SUFFIX=${BASE44_PUBLIC_HOST_SUFFIX}
+    volumes:
+      - ./:/app
+      # dependencies stay out of the bind mount and out of git
+      - node_modules:/app/node_modules
+    # install on start (after the mount is in place), then run the dev server
+    command:
+      - sh
+      - -ec
+      - npm install --no-audit --no-fund && exec npm run dev
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - >-
+          node -e "fetch('http://127.0.0.1:3000/').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"
+      interval: 15s
+      timeout: 5s
+      retries: 20
+      start_period: 180s
+
+volumes:
+  node_modules:

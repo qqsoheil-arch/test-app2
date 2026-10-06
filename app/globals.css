@@ -1,0 +1,146 @@
+@import "tailwindcss";
+
+/* ==========================================================================
+   Vostadoor design tokens
+   Dark architectural palette + warm champagne accent, Persian RTL first.
+   ========================================================================== */
+@theme {
+  --color-ink: #111111;
+  --color-ink-soft: #1a1a1a;
+  --color-ink-elevated: #212121;
+  --color-line: #2a2a2a;
+  --color-cream: #f5f2ea;
+  --color-muted: #b8b5ae;
+  --color-gold: #c7a66a;
+  --color-gold-soft: #dcc79b;
+  --color-gold-deep: #9d7f45;
+
+  --font-sans: var(--font-vazirmatn), ui-sans-serif, system-ui, sans-serif;
+  --font-display: Georgia, "Times New Roman", "Songti SC", serif;
+
+  --container-page: 1220px;
+  --tracking-latin: 0.34em;
+  --tracking-label: 0.16em;
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    background-color: var(--color-ink);
+    color: var(--color-cream);
+    font-family: var(--font-sans);
+    line-height: 1.9;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    line-height: 1.45;
+    text-wrap: balance;
+  }
+
+  p {
+    text-wrap: pretty;
+  }
+
+  ::selection {
+    background: var(--color-gold);
+    color: #111111;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-gold);
+    outline-offset: 3px;
+  }
+
+  /* Persian numerals everywhere inside data labels stay tabular */
+  .tnum {
+    font-variant-numeric: tabular-nums;
+  }
+}
+
+@layer components {
+  .container-page {
+    width: 100%;
+    max-width: var(--container-page);
+    margin-inline: auto;
+    padding-inline: 1.25rem;
+  }
+
+  @media (min-width: 1024px) {
+    .container-page {
+      padding-inline: 2rem;
+    }
+  }
+
+  /* scroll-in reveal, toggled by components/Reveal.tsx */
+  .reveal {
+    opacity: 0;
+    transform: translateY(20px);
+    transition:
+      opacity 0.9s ease,
+      transform 0.9s cubic-bezier(0.2, 0.7, 0.2, 1);
+    will-change: opacity, transform;
+  }
+
+  .reveal[data-visible="true"] {
+    opacity: 1;
+    transform: none;
+  }
+
+  .latin {
+    font-family: var(--font-display);
+    letter-spacing: var(--tracking-latin);
+  }
+
+  .label {
+    letter-spacing: var(--tracking-label);
+  }
+
+  .hairline {
+    border-color: color-mix(in srgb, var(--color-cream) 9%, transparent);
+  }
+
+  /* subtle architectural grid used behind empty/placeholder areas */
+  .blueprint {
+    background-image:
+      linear-gradient(to right, color-mix(in srgb, var(--color-cream) 5%, transparent) 1px, transparent 1px),
+      linear-gradient(to bottom, color-mix(in srgb, var(--color-cream) 5%, transparent) 1px, transparent 1px);
+    background-size: 44px 44px;
+  }
+
+  .image-shade {
+    background: linear-gradient(
+      to top,
+      rgba(17, 17, 17, 0.92) 0%,
+      rgba(17, 17, 17, 0.55) 45%,
+      rgba(17, 17, 17, 0.25) 100%
+    );
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  .reveal {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    transition-duration: 0.001ms !important;
+  }
+}
